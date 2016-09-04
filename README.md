@@ -1,6 +1,7 @@
 # Scyther
 
 [![Travis](https://img.shields.io/travis/joshsamara/scyther.svg?maxAge=2592000)]()
+[![Coveralls](https://img.shields.io/coveralls/joshsamara/scyther.svg?maxAge=2592000?style=flat-square)]()
 
 The Scyther catching simulator! Simulates Generation 1 capturing mechanics for
 Scyther.
