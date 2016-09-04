@@ -43,7 +43,7 @@ class TestCalculateHP(TestCase):
         self.assertEqual(Pokemon.calculate_hp(0, 0, 1), 11)
 
     def test_diglett(self):
-        """Test min base hp edge case."""
+        """Test min base hp pokemon."""
         self.assertEqual(Pokemon.calculate_hp(10, 0, 1), 11)
         self.assertEqual(Pokemon.calculate_hp(10, 15, 1), 11)
         self.assertEqual(Pokemon.calculate_hp(10, 0, 50), 70)
@@ -61,10 +61,38 @@ class TestCalculateHP(TestCase):
         self.assertEqual(Pokemon.calculate_hp(70, 15, 100), 280)
 
     def test_chancey(self):
-        """Test max base hp edge case."""
+        """Test max base hp pokemon."""
         self.assertEqual(Pokemon.calculate_hp(250, 0, 1), 16)
         self.assertEqual(Pokemon.calculate_hp(250, 15, 1), 16)
         self.assertEqual(Pokemon.calculate_hp(250, 0, 50), 310)
         self.assertEqual(Pokemon.calculate_hp(250, 15, 50), 325)
         self.assertEqual(Pokemon.calculate_hp(250, 0, 100), 610)
         self.assertEqual(Pokemon.calculate_hp(250, 15, 100), 640)
+
+
+class TestInit(TestCase):
+    def test_name(self):
+        self.assertEqual(Pokemon(0).name, "Pokemon")
+        # Name should just pass through
+        self.assertEqual(Pokemon(0, name="Scyther").name, "Scyther")
+
+    @mock.patch('scyther.pokemon.Pokemon.get_hp_ivs')
+    def test_get_hp_ivs(self, mock_ivs):
+        """Test that we only call get_hpi_ivs when no hp_ivs are passed in."""
+        # Create a new pokemon while passing IVs
+        test_pokemon1 = Pokemon(0, hp_ivs=10)
+        self.assertFalse(mock_ivs.called)
+        self.assertEqual(test_pokemon1._hp_ivs, 10)
+
+        # Passing no IVs will cause get_hp_ivs to be called
+        mock_ivs.return_value = 999
+        test_pokemon2 = Pokemon(0)
+        self.assertTrue(mock_ivs.called)
+        self.assertEqual(test_pokemon2._hp_ivs, 999)
+
+    @mock.patch('scyther.pokemon.Pokemon.calculate_hp')
+    def test_max_hp(self, mock_calc_hp):
+        """Max HP should simply be set as the result of calculate_hp."""
+        mock_calc_hp.return_value = 99999
+        test_pokemon = Pokemon(0)
+        self.assertEqual(test_pokemon.max_hp, 99999)
