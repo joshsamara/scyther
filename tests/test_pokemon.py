@@ -78,7 +78,7 @@ class TestCalculateHP(TestCase):
         self.assertEqual(Pokemon.calculate_hp(70, 0, 100), 250)
         self.assertEqual(Pokemon.calculate_hp(70, 15, 100), 280)
 
-    def test_chancey(self):
+    def test_chansey(self):
         """Test max base hp pokemon."""
         self.assertEqual(Pokemon.calculate_hp(250, 0, 1), 16)
         self.assertEqual(Pokemon.calculate_hp(250, 15, 1), 16)

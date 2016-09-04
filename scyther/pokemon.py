@@ -51,25 +51,32 @@ class Pokemon(object):
         level (int optional): Current pokemon level. Defaults to 1.
         status (string optional): String representing the current status.
             Maps to a member of the Status enum. Defaults to normal
+        catch_rate (int optional): The pokemon's catch rate.
         name (str optional): Pokemon name. Defaults to "Pokemon"
+        is_ghost_marowak (boolean optional): Is this pokemon Ghost Marowak?
         art (str optional): Ascii art represnting the pokemon.
             Defaults to a pokeball. TODO
 
     Attributes:
         max_hp (int): Pokemon's max hit points based on level.
         level (int): Pokemon's current level.
+        catch_rate (int): Pokemon's catch rate.
         status (Status): Pokemon's current status.
-        name (str optional): Name of the pokemon.
+        name (str): Name of the pokemon.
+        is_ghost_marowak (boolean): Is this pokemon Ghost Marowak?
     """
     def __init__(self, base_hp, hp_ivs=None, level=1,
-                 status="normal", name="Pokemon"):
+                 catch_rate=255, status="normal", name="Pokemon",
+                 is_ghost_marowak=False):
         if hp_ivs is None:
             hp_ivs = self.get_hp_ivs()
 
         self.max_hp = self.calculate_hp(base_hp, hp_ivs, level)
         self.level = level
+        self.catch_rate = catch_rate
         self.status = self.get_status(status)
         self.name = name
+        self.is_ghost_marowak = is_ghost_marowak
         # Set private attributes for debugging/testing
         self._base_hp = base_hp
         self._hp_ivs = hp_ivs
