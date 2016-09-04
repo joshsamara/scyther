@@ -6,14 +6,6 @@ from unittest import TestCase, mock
 from scyther.pokemon import Pokemon, Status, InvalidStatusError
 
 
-class TestStatusNames(TestCase):
-    def test_names(self):
-        names = Status.names()
-        self.assertListEqual(names, ['normal', 'poisoned',
-                                     'burned', 'paralyzed',
-                                     'asleep', 'frozen'])
-
-
 class TestGetHpIVs(TestCase):
     @mock.patch('scyther.pokemon.randint')
     def test_min_value(self, mock_rand):
