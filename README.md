@@ -8,7 +8,7 @@ Scyther.
 I've included a separate requirements.txt file in the `tests` subdirectory. To
 run tests, install these requirements and run
 
-    $ green -r
+    $ nosetests --with-coverage
 
 To run the tests with code coverage. To generate a coverage report, run
 

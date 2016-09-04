@@ -1,2 +1,4 @@
+[run]
+omit = *mock*
 [report]
-show_missing=True
+show_missing = True
