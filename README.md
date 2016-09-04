@@ -1,7 +1,8 @@
 # Scyther
 
-[![Travis](https://img.shields.io/travis/joshsamara/scyther.svg?maxAge=2592000)]()
-[![Coveralls](https://img.shields.io/coveralls/joshsamara/scyther.svg?maxAge=2592000?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/joshsamara/scyther.svg?maxAge=2592000?style=flat)](https://travis-ci.org/joshsamara/scyther)
+[![Coveralls](https://img.shields.io/coveralls/joshsamara/scyther.svg?maxAge=2592000?style=flat)](https://coveralls.io/github/joshsamara/scyther)
+[![Code Health](https://landscape.io/github/joshsamara/scyther/master/landscape.svg?style=flat)](https://landscape.io/github/joshsamara/scyther/master)
 
 The Scyther catching simulator! Simulates Generation 1 capturing mechanics for
 Scyther.
