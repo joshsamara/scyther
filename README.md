@@ -3,6 +3,10 @@
 The Scyther catching simulator! Simulates Generation 1 capturing mechanics for
 Scyther.
 
+# Compatibility
+
+Written to work with `python3`.
+
 # Running Tests
 
 I've included a separate requirements.txt file in the `tests` subdirectory. To
