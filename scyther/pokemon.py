@@ -23,14 +23,15 @@ class Pokemon(object):
             Defaults to a pokeball.
 
     Attributes:
-        hp (int): Pokemon's max hit points based on level.
+        max_hp (int): Pokemon's max hit points based on level.
         name (str optional): Name of the pokemon.
     """
     def __init__(self, base_hp, hp_ivs=None, level=1, name="Pokemon"):
         if hp_ivs is None:
             hp_ivs = self.get_hp_ivs()
 
-        self.hp = self.calculate_hp(base_hp, hp_ivs, level)
+        self.max_hp = self.calculate_hp(base_hp, hp_ivs, level)
+        self.name = name
 
     @staticmethod
     def get_hp_ivs():
@@ -43,8 +44,8 @@ class Pokemon(object):
         defense = (randint(0, 15) & 0b1) << 2
         speed = (randint(0, 15) & 0b1) << 1
         special = (randint(0, 15) & 0b1) << 0
-        hp = attack | defense | speed | special
-        return hp
+        hp_ivs = attack | defense | speed | special
+        return hp_ivs
 
     @staticmethod
     def calculate_hp(base_hp, hp_ivs, level):

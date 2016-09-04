@@ -27,9 +27,19 @@ class TestGetHpIVs(TestCase):
         mock_rand.return_value = 7
         self.assertEqual(Pokemon.get_hp_ivs(), 15)
 
+    def test_randoms(self):
+        for i in range(1000):
+            # Technically this could miss a case where it generates outside
+            # But the idea is to hopefully catch any obvious failures.
+            # Test random is harrd.
+            hp_ivs = Pokemon.get_hp_ivs()
+            self.assertGreaterEqual(hp_ivs, 0)
+            self.assertLessEqual(hp_ivs, 15)
+
 
 class TestCalculateHP(TestCase):
     def test_minimum(self):
+        """Test impossible minimum case."""
         self.assertEqual(Pokemon.calculate_hp(0, 0, 1), 11)
 
     def test_diglett(self):
