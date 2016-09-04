@@ -10,9 +10,9 @@ install:
 script:
   - "nosetests --with-coverage"
   - "coverage xml"
-after_sucess:
-  "coveralls"
 notifications:
   email:
     on_success: "change"
     on_failure: "always"
+after_sucess:
+  - "coveralls"
