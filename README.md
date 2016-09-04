@@ -18,5 +18,7 @@ after running these tests.
 
 # Sources
 
+This site has a great breakdown of the Gen 1 mechanics and how they work.
+
 1. http://www.dragonflycave.com/mechanics/gen-i-capturing
 2. http://www.dragonflycave.com/mechanics/gen-i-safari-zone
