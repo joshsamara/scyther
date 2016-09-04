@@ -2,7 +2,12 @@
 """Base class representing a single Pokemon.
 
 Made to be generic and loadable with a pokemon's stats.
+
+Note:
+    These mechanics mirror generation 1 (RBY).
 """
+
+from random import randint
 
 
 class Pokemon(object):
@@ -29,9 +34,17 @@ class Pokemon(object):
 
     @staticmethod
     def get_hp_ivs():
-        """Randomly generate a value for HP IVs."""
-        # TODO: Generate this properly
-        return 0
+        """Randomly generate a value for HP IVs.
+
+        Notes:
+            This micics the actual HP IV calculation.
+        """
+        attack = (randint(0, 15) & 0b1) << 3
+        defense = (randint(0, 15) & 0b1) << 2
+        speed = (randint(0, 15) & 0b1) << 1
+        special = (randint(0, 15) & 0b1) << 0
+        hp = attack | defense | speed | special
+        return hp
 
     @staticmethod
     def calculate_hp(base_hp, hp_ivs, level):

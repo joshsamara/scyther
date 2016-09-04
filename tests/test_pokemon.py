@@ -1,17 +1,34 @@
 # -*- coding: utf-8 -*-
 """Tests for Pokemon class."""
 
-import unittest
+from unittest import TestCase, mock
+
 from scyther.pokemon import Pokemon
 
 
-class TestGetHpIVs(unittest.TestCase):
-    @unittest.skip("TODO")
-    def test_nothing(self):
+class TestGetHpIVs(TestCase):
+    @mock.patch('scyther.pokemon.randint')
+    def test_min_value(self, mock_rand):
+        mock_rand.return_value = 0
+        self.assertEqual(Pokemon.get_hp_ivs(), 0)
+        # All even values should result in 0
+        mock_rand.return_value = 2
+        self.assertEqual(Pokemon.get_hp_ivs(), 0)
+        mock_rand.return_value = 8
         self.assertEqual(Pokemon.get_hp_ivs(), 0)
 
+    @mock.patch('scyther.pokemon.randint')
+    def test_max_value(self, mock_rand):
+        mock_rand.return_value = 15
+        self.assertEqual(Pokemon.get_hp_ivs(), 15)
+        # All odd values should result in 15
+        mock_rand.return_value = 1
+        self.assertEqual(Pokemon.get_hp_ivs(), 15)
+        mock_rand.return_value = 7
+        self.assertEqual(Pokemon.get_hp_ivs(), 15)
 
-class TestCalculateHP(unittest.TestCase):
+
+class TestCalculateHP(TestCase):
     def test_minimum(self):
         self.assertEqual(Pokemon.calculate_hp(0, 0, 1), 11)
 
