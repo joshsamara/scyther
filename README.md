@@ -7,7 +7,7 @@ Scyther.
 
 # Compatibility
 
-Written to work with `python3`.
+Written to work with `python==3.4+`.
 
 # Running Tests
 
