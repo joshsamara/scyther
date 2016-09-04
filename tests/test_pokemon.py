@@ -3,7 +3,15 @@
 
 from unittest import TestCase, mock
 
-from scyther.pokemon import Pokemon
+from scyther.pokemon import Pokemon, Status, InvalidStatusError
+
+
+class TestStatusNames(TestCase):
+    def test_names(self):
+        names = Status.names()
+        self.assertListEqual(names, ['normal', 'poisoned',
+                                     'burned', 'paralyzed',
+                                     'asleep', 'frozen'])
 
 
 class TestGetHpIVs(TestCase):
@@ -31,10 +39,20 @@ class TestGetHpIVs(TestCase):
         for i in range(1000):
             # Technically this could miss a case where it generates outside
             # But the idea is to hopefully catch any obvious failures.
-            # Test random is harrd.
+            # Testing random is hard.
             hp_ivs = Pokemon.get_hp_ivs()
             self.assertGreaterEqual(hp_ivs, 0)
             self.assertLessEqual(hp_ivs, 15)
+
+
+class TestGetStatus(TestCase):
+    def test_valid_status(self):
+        status = Pokemon.get_status('normal')
+        self.assertEqual(status, Status.normal)
+
+    def test_invalid_status(self):
+        with self.assertRaises(InvalidStatusError):
+            Pokemon.get_status('invalid')
 
 
 class TestCalculateHP(TestCase):
@@ -96,3 +114,12 @@ class TestInit(TestCase):
         mock_calc_hp.return_value = 99999
         test_pokemon = Pokemon(0)
         self.assertEqual(test_pokemon.max_hp, 99999)
+
+    def test_status(self):
+        # Should default to normal
+        test_pokemon1 = Pokemon(0)
+        self.assertEqual(test_pokemon1.status, Status.normal)
+
+        # Should use whatever's passed in
+        test_pokemon1 = Pokemon(0, status="burned")
+        self.assertEqual(test_pokemon1.status, Status.burned)
