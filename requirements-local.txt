@@ -1,0 +1,5 @@
+# Requirements I find useful for dev'ing.
+# Including these in case anyone is interested.
+# They're entirely unnecessary though.
+rednose==1.2.1  # nosetests --rednose
+ipdb==0.10.1  # import ipdb; ipdb.set_trace()
