@@ -39,4 +39,4 @@ class Pokemon(object):
 
         See: http://cdn.bulbagarden.net/upload/d/d4/HP_calc.png
         """
-        return (((base_hp + hp_ivs) * 2) * level) / 100 + level + 10
+        return (((base_hp + hp_ivs) * 2) * level) // 100 + level + 10
