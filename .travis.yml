@@ -7,9 +7,11 @@ python:
 install:
   - "pip install -r tests/requirements.txt"
 script:
-  - "nosetests"
+  - "nosetests --with-coverage"
+  - "coverage xml"
+after_sucess:
+  "coveralls"
 notifications:
   email:
     on_success: "change"
     on_failure: "always"
-
