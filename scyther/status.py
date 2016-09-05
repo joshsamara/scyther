@@ -8,18 +8,14 @@ class Status(Enum):
     """Posible pokemon statuses.
 
     The value of the status are a tuple of integers in the form of:
-        (<Effect on catch chance>, <Effect on animation chance>, id)
-
-    Note:
-        The id field is set to allow multiple Status of the same chances to
-        exist separately in the same Enum.
+        (<Effect on catch chance>, <Effect on animation chance>, <Display value>)
     """
-    normal = (0, 0, 1)
-    poisoned = (0, 5, 2)
-    burned = (12, 5, 3)
-    paralyzed = (12, 5, 4)
-    asleep = (25, 10, 5)
-    frozen = (25, 10, 6)
+    normal = (0, 0, "Normal")
+    poisoned = (0, 5, "Poisoned")
+    burned = (12, 5, "Burned")
+    paralyzed = (12, 5, "Paralyzed")
+    asleep = (25, 10, "Asleep")
+    frozen = (25, 10, "Frozen")
 
     @property
     def catch_modifier(self):
@@ -32,6 +28,6 @@ class Status(Enum):
         return self.value[1]
 
     @property
-    def id(self):
-        """The Status's ID."""
+    def display(self):
+        """The Status's display value."""
         return self.value[2]

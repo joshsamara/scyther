@@ -13,8 +13,8 @@ class TestProperties(TestCase):
     def test_animation_modifier(self):
         self.assertEqual(Ball.safari.hp_factor, 12)
 
-    def test_id(self):
-        self.assertEqual(Ball.ultra.id, 3)
+    def test_display(self):
+        self.assertEqual(Ball.ultra.display, "Ultraball")
 
     def test_is_master_ball(self):
         self.assertFalse(Ball.ultra.is_master_ball)

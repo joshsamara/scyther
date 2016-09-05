@@ -13,5 +13,5 @@ class TestProperties(TestCase):
     def test_animation_modifier(self):
         self.assertEqual(Status.asleep.animation_modifier, 10)
 
-    def test_id(self):
-        self.assertEqual(Status.frozen.id, 6)
+    def test_display(self):
+        self.assertEqual(Status.frozen.display, "Frozen")
