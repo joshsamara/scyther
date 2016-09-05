@@ -20,3 +20,18 @@ class Status(Enum):
     paralyzed = (12, 5, 4)
     asleep = (25, 10, 5)
     frozen = (25, 10, 6)
+
+    @property
+    def catch_modifier(self):
+        """Modifier of the Status on the catch chance."""
+        return self.value[0]
+
+    @property
+    def animation_modifier(self):
+        """Modifier of the Status on the animation effect."""
+        return self.value[1]
+
+    @property
+    def id(self):
+        """The Status's ID."""
+        return self.value[2]
