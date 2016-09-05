@@ -3,7 +3,7 @@
 
 from unittest import TestCase, mock
 
-from scyther.pokemon import Pokemon, Status, InvalidStatusError
+from scyther.pokemon import Pokemon, Status
 
 
 class TestGetHpIVs(TestCase):
@@ -35,16 +35,6 @@ class TestGetHpIVs(TestCase):
             hp_ivs = Pokemon.get_hp_ivs()
             self.assertGreaterEqual(hp_ivs, 0)
             self.assertLessEqual(hp_ivs, 15)
-
-
-class TestGetStatus(TestCase):
-    def test_valid_status(self):
-        status = Pokemon.get_status('normal')
-        self.assertEqual(status, Status.normal)
-
-    def test_invalid_status(self):
-        with self.assertRaises(InvalidStatusError):
-            Pokemon.get_status('invalid')
 
 
 class TestCalculateHP(TestCase):

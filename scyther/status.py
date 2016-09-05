@@ -25,10 +25,3 @@ class Status(Enum):
     def names(cls):
         """Get the name of all members of the Status enum."""
         return [member.name for member in cls]
-
-
-class InvalidStatusError(Exception):
-    """Exception for selecting a bad Status."""
-    def __init__(self, bad_status):
-        self.message = ("Invalid status '{}'. Use one of the "
-                        "following values: {}".format(bad_status, Status.names()))

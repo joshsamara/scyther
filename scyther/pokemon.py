@@ -9,7 +9,7 @@ Note:
 
 from random import randint
 
-from scyther.status import Status, InvalidStatusError
+from scyther.status import Status
 
 
 class Pokemon(object):
@@ -45,7 +45,7 @@ class Pokemon(object):
         self.max_hp = self.calculate_hp(base_hp, hp_ivs, level)
         self.level = level
         self.catch_rate = catch_rate
-        self.status = self.get_status(status)
+        self.status = Status[status]
         self.name = name
         self.is_ghost_marowak = is_ghost_marowak
         # Set private attributes for debugging/testing
@@ -73,11 +73,3 @@ class Pokemon(object):
         See: http://cdn.bulbagarden.net/upload/d/d4/HP_calc.png
         """
         return (((base_hp + hp_ivs) * 2) * level) // 100 + level + 10
-
-    @staticmethod
-    def get_status(status):
-        """Get a member of a Status enum from a status string."""
-        try:
-            return Status[status]
-        except KeyError:
-            raise InvalidStatusError(status)
