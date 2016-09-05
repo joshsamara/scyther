@@ -20,8 +20,3 @@ class Status(Enum):
     paralyzed = (12, 5, 4)
     asleep = (25, 10, 5)
     frozen = (25, 10, 6)
-
-    @classmethod
-    def names(cls):
-        """Get the name of all members of the Status enum."""
-        return [member.name for member in cls]
