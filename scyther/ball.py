@@ -14,7 +14,7 @@ class Ball(Enum):
     great = (200, 8, "Greatball")
     ultra = (150, 12, "Ultraball")
     safari = (150, 12, "Safariball")
-    master = (None, None, "Masterball")
+    master = (0, 1, "Masterball")
 
     @property
     def catch_modifier(self):

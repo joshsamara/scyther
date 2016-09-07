@@ -3,7 +3,9 @@
 
 from unittest import TestCase, mock
 
-from scyther.pokemon import Pokemon, Status
+from scyther.status import Status
+from scyther.ball import Ball
+from scyther.pokemon import Pokemon
 
 
 class TestGetHpIVs(TestCase):
@@ -72,21 +74,21 @@ class TestCalculateHP(TestCase):
 
 class TestInit(TestCase):
     def test_name(self):
-        self.assertEqual(Pokemon(0).name, "Pokemon")
+        self.assertEqual(Pokemon().name, "Pokemon")
         # Name should just pass through
-        self.assertEqual(Pokemon(0, name="Scyther").name, "Scyther")
+        self.assertEqual(Pokemon(name="Scyther").name, "Scyther")
 
     @mock.patch('scyther.pokemon.Pokemon.get_hp_ivs')
     def test_get_hp_ivs(self, mock_ivs):
         """Test that we only call get_hpi_ivs when no hp_ivs are passed in."""
         # Create a new pokemon while passing IVs
-        test_pokemon1 = Pokemon(0, hp_ivs=10)
+        test_pokemon1 = Pokemon( hp_ivs=10)
         self.assertFalse(mock_ivs.called)
         self.assertEqual(test_pokemon1._hp_ivs, 10)
 
         # Passing no IVs will cause get_hp_ivs to be called
         mock_ivs.return_value = 999
-        test_pokemon2 = Pokemon(0)
+        test_pokemon2 = Pokemon()
         self.assertTrue(mock_ivs.called)
         self.assertEqual(test_pokemon2._hp_ivs, 999)
 
@@ -94,14 +96,99 @@ class TestInit(TestCase):
     def test_max_hp(self, mock_calc_hp):
         """Max HP should simply be set as the result of calculate_hp."""
         mock_calc_hp.return_value = 99999
-        test_pokemon = Pokemon(0)
+        test_pokemon = Pokemon()
         self.assertEqual(test_pokemon.max_hp, 99999)
 
     def test_status(self):
         # Should default to normal
-        test_pokemon1 = Pokemon(0)
+        test_pokemon1 = Pokemon()
         self.assertEqual(test_pokemon1.status, Status.normal)
 
         # Should use whatever's passed in
-        test_pokemon1 = Pokemon(0, status="burned")
+        test_pokemon1 = Pokemon(status="burned")
         self.assertEqual(test_pokemon1.status, Status.burned)
+
+
+class TestCatchBallcheck(TestCase):
+    @mock.patch('scyther.pokemon.randint')
+    def test_pokeball(self, mock_rand):
+        mock_rand.return_value = 35
+        test_pokemon = Pokemon(status="burned")
+        # This should simply be the random result minus the status effect
+        self.assertEqual(test_pokemon._catch_ballcheck(Ball.poke), 23)
+        # Random should be called with the pokeball's range
+        mock_rand.assert_called_with(0, 255)
+        # A frozen status should lower check value
+        test_pokemon.status = Status.frozen
+        self.assertEqual(test_pokemon._catch_ballcheck(Ball.poke), 10)
+
+    @mock.patch('scyther.pokemon.randint')
+    def test_negative_check(self, mock_rand):
+        mock_rand.return_value = 0
+        test_pokemon = Pokemon(status="burned")
+        # Simply testing that negative values are possible
+        self.assertEqual(test_pokemon._catch_ballcheck(Ball.poke), -12)
+
+
+class TestCatchHPcheck(TestCase):
+    def test_full_hp(self):
+        test_pokemon = Pokemon()
+        test_pokemon.max_hp = 100
+        test_pokemon.current_hp = 100
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.poke), 85)
+        # Great ball is a good test because it performs integer rounding
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.great), 127)
+
+    def test_low_hp(self):
+        # Low hp values should be higher than the high hp values
+        test_pokemon = Pokemon()
+        test_pokemon.max_hp = 10
+        test_pokemon.current_hp = 2
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.poke), 212)
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.great), 255)
+
+
+class TestCatch(TestCase):
+    def test_ghost_marowak(self):
+        """Ghost marowak is uncatchable."""
+        test_pokemon = Pokemon(is_ghost_marowak=True)
+        self.assertFalse(test_pokemon.catch(Ball.master))
+
+    def test_masterball(self):
+        """Masterballs always catch."""
+        self.assertTrue(Pokemon().catch(Ball.master))
+
+    @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
+    def test_negative_ballcheck(self, ballcheck):
+        """A negative ballcheck higher will always catch."""
+        ballcheck.return_value = -10
+        self.assertTrue(Pokemon().catch(Ball.poke))
+
+    @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
+    def test_ballcheck_catchrate(self, ballcheck):
+        """A ballcheck higher than the pokemon's catchrate will always fail."""
+        ballcheck.return_value = 70
+        self.assertFalse(Pokemon(catch_rate=35).catch(Ball.poke))
+
+    @mock.patch('scyther.pokemon.randint')
+    @mock.patch('scyther.pokemon.Pokemon._catch_hpcheck')
+    @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
+    def test_hpcheck(self, ballcheck, hpcheck, mock_rand):
+        """An HP check greater than the random value wil catch."""
+        ballcheck.return_value = 10
+        hpcheck.return_value = 75
+        mock_rand.return_value = 70
+        self.assertTrue(Pokemon(catch_rate=35).catch(Ball.poke))
+        # Equal values should catch
+        hpcheck.return_value = 70
+        self.assertTrue(Pokemon(catch_rate=35).catch(Ball.poke))
+
+    @mock.patch('scyther.pokemon.randint')
+    @mock.patch('scyther.pokemon.Pokemon._catch_hpcheck')
+    @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
+    def test_fail_all(self, ballcheck, hpcheck, mock_rand):
+        """When all checks fail, catching will fail."""
+        ballcheck.return_value = 10
+        hpcheck.return_value = 75
+        mock_rand.return_value = 80
+        self.assertFalse(Pokemon(catch_rate=35).catch(Ball.poke))
