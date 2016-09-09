@@ -120,9 +120,7 @@ class Pokemon(object):
     # These are defined outside of the catch function for better testability.
     ##
     def _catch_ballcheck(self, ball):
-        """
-        Calculate the ballcheck for the catch function.
-
+        """Calculate the ballcheck for the catch function.
 
         Note:
             A lower value here increases catch rate.
@@ -130,8 +128,7 @@ class Pokemon(object):
         return randint(0, ball.catch_modifier) - self.status.catch_modifier
 
     def _catch_hpcheck(self, ball):
-        """
-        Calculate the hp check for the catch function.
+        """Calculate the hp check for the catch function.
 
         Note:
             A lower value here lowers catch rate.
