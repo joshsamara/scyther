@@ -139,3 +139,27 @@ class Pokemon(object):
         if hp_divisor > 0:
             hp_check = hp_check // hp_divisor
         return min(hp_check, 255)
+
+    def animate(self, ball):
+        """Determine the wobble count and text when failing to catch.
+
+        Returns:
+            (int, str): Number of wobbles, text to display.
+
+        Note:
+            The return value here is constant for a given pokemon.
+        """
+        animation_check = (self.catch_rate * 100) // ball.catch_modifier
+        # Impossible in the real game
+        if animation_check > 255:
+            return 3, ""
+        animation_check += self.status.animation_modifier
+
+        if animation_check < 10:
+            return 0, "The ball missed the POKEéMON!"
+        elif animation_check < 30:
+            return 1, "Darn! The POKEéMON broke free!"
+        elif animation_check < 70:
+            return 2, "Aww! It appeared to be caught!"
+        else:
+            return 3, "Shoot! It was close too!"

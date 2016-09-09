@@ -192,3 +192,45 @@ class TestCatch(TestCase):
         hpcheck.return_value = 75
         mock_rand.return_value = 80
         self.assertFalse(Pokemon(catch_rate=35).catch(Ball.poke))
+
+
+class TestAnimate(TestCase):
+    def test_impossible(self):
+        pokemon = Pokemon(catch_rate=999)
+        wobbles, msg = pokemon.animate(Ball.ultra)
+        self.assertEqual(wobbles, 3)
+        self.assertEqual(msg, "")
+
+    @mock.patch('scyther.ball.Ball')
+    def test_impossible_edge(self, mock_ball):
+        """Test where where the animation check is exactly 255."""
+        pokemon = Pokemon(catch_rate=255)
+        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
+        wobbles, msg = pokemon.animate(Ball.ultra)
+        self.assertEqual(wobbles, 3)
+        self.assertEqual(msg, "Shoot! It was close too!")
+
+    # TODO: Parameterize these tests
+    @mock.patch('scyther.ball.Ball')
+    def test_less_than_10(self, mock_ball):
+        pokemon = Pokemon(catch_rate=9)
+        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
+        wobbles, msg = pokemon.animate(Ball.ultra)
+        self.assertEqual(wobbles, 0)
+        self.assertEqual(msg, "The ball missed the POKEéMON!")
+
+    @mock.patch('scyther.ball.Ball')
+    def test_less_than_30(self, mock_ball):
+        pokemon = Pokemon(catch_rate=22)
+        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
+        wobbles, msg = pokemon.animate(Ball.ultra)
+        self.assertEqual(wobbles, 1)
+        self.assertEqual(msg, "Darn! The POKEéMON broke free!")
+
+    @mock.patch('scyther.ball.Ball')
+    def test_less_than_70(self, mock_ball):
+        pokemon = Pokemon(catch_rate=55)
+        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
+        wobbles, msg = pokemon.animate(Ball.ultra)
+        self.assertEqual(wobbles, 2)
+        self.assertEqual(msg, "Aww! It appeared to be caught!")
