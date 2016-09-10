@@ -2,6 +2,7 @@
 """Tests for Pokemon class."""
 
 from unittest import TestCase, mock
+from nose_parameterized import parameterized
 
 from scyther.status import Status
 from scyther.ball import Ball
@@ -10,24 +11,28 @@ from scyther.pokemon import Pokemon
 
 class TestGetHpIVs(TestCase):
     @mock.patch('scyther.pokemon.randint')
-    def test_min_value(self, mock_rand):
-        mock_rand.return_value = 0
-        self.assertEqual(Pokemon.get_hp_ivs(), 0)
-        # All even values should result in 0
-        mock_rand.return_value = 2
-        self.assertEqual(Pokemon.get_hp_ivs(), 0)
-        mock_rand.return_value = 8
-        self.assertEqual(Pokemon.get_hp_ivs(), 0)
+    def test_same_values(self, mock_rand):
+        """Test that odd and even values return either 0 or 15."""
+        for i in range(16):
+            mock_rand.return_value = i
+            if i % 2 == 0:
+                expected = 0
+            else:
+                expected = 15
+            self.assertEqual(Pokemon.get_hp_ivs(), expected)
 
+    @parameterized.expand([
+        ('all_zero', [4, 2, 0, 14], 0b0000),
+        ('one_one', [4, 2, 0, 13], 0b0001),
+        ('two_ones', [4, 11, 0, 13], 0b0101),
+        ('two_opposite_ones', [9, 8, 7, 6], 0b1010),
+        ('three_ones', [15, 7, 7, 6], 0b1110),
+        ('all_ones', [1, 3, 5, 7], 0b1111)
+    ])
     @mock.patch('scyther.pokemon.randint')
-    def test_max_value(self, mock_rand):
-        mock_rand.return_value = 15
-        self.assertEqual(Pokemon.get_hp_ivs(), 15)
-        # All odd values should result in 15
-        mock_rand.return_value = 1
-        self.assertEqual(Pokemon.get_hp_ivs(), 15)
-        mock_rand.return_value = 7
-        self.assertEqual(Pokemon.get_hp_ivs(), 15)
+    def test_bit_combination(self, name, rand_vals, expected, mock_rand):
+        mock_rand.side_effect = rand_vals
+        self.assertEqual(Pokemon.get_hp_ivs(), expected)
 
     def test_randoms(self):
         for i in range(1000):
@@ -44,32 +49,32 @@ class TestCalculateHP(TestCase):
         """Test impossible minimum case."""
         self.assertEqual(Pokemon.calculate_hp(0, 0, 1), 11)
 
-    def test_diglett(self):
-        """Test min base hp pokemon."""
-        self.assertEqual(Pokemon.calculate_hp(10, 0, 1), 11)
-        self.assertEqual(Pokemon.calculate_hp(10, 15, 1), 11)
-        self.assertEqual(Pokemon.calculate_hp(10, 0, 50), 70)
-        self.assertEqual(Pokemon.calculate_hp(10, 15, 50), 85)
-        self.assertEqual(Pokemon.calculate_hp(10, 0, 100), 130)
-        self.assertEqual(Pokemon.calculate_hp(10, 15, 100), 160)
-
-    def test_scyther(self):
-        """Test scyther case."""
-        self.assertEqual(Pokemon.calculate_hp(70, 0, 1), 12)
-        self.assertEqual(Pokemon.calculate_hp(70, 15, 1), 12)
-        self.assertEqual(Pokemon.calculate_hp(70, 0, 50), 130)
-        self.assertEqual(Pokemon.calculate_hp(70, 15, 50), 145)
-        self.assertEqual(Pokemon.calculate_hp(70, 0, 100), 250)
-        self.assertEqual(Pokemon.calculate_hp(70, 15, 100), 280)
-
-    def test_chansey(self):
-        """Test max base hp pokemon."""
-        self.assertEqual(Pokemon.calculate_hp(250, 0, 1), 16)
-        self.assertEqual(Pokemon.calculate_hp(250, 15, 1), 16)
-        self.assertEqual(Pokemon.calculate_hp(250, 0, 50), 310)
-        self.assertEqual(Pokemon.calculate_hp(250, 15, 50), 325)
-        self.assertEqual(Pokemon.calculate_hp(250, 0, 100), 610)
-        self.assertEqual(Pokemon.calculate_hp(250, 15, 100), 640)
+    @parameterized.expand([
+        # Diglett has the lowest base hp
+        ("diglett_1_min", 10, 0, 1, 11),
+        ("diglett_1_max", 10, 15, 1, 11),
+        ("diglett_50_min", 10, 0, 50, 70),
+        ("diglett_50_max", 10, 15, 50, 85),
+        ("diglett_100_min", 10, 0, 100, 130),
+        ("diglett_100_max", 10, 15, 100, 160),
+        # Test the mascott
+        ("scyther_1_min", 70, 0, 1, 12),
+        ("scyther_1_max", 70, 15, 1, 12),
+        ("scyther_50_min", 70, 0, 50, 130),
+        ("scyther_50_max", 70, 15, 50, 145),
+        ("scyther_100_min", 70, 0, 100, 250),
+        ("scyther_100_max", 70, 15, 100, 280),
+        # Chansey has the highest base hp
+        ("chansey_1_min", 250, 0, 1, 16),
+        ("chansey_1_max", 250, 15, 1, 16),
+        ("chansey_50_min", 250, 0, 50, 310),
+        ("chansey_50_max", 250, 15, 50, 325),
+        ("chansey_100_min", 250, 0, 100, 610),
+        ("chansey_100_max", 250, 15, 100, 640),
+    ])
+    def test_pokemon_values(self, name, base_hp, hp_ivs, level, expected):
+        """Test real world values."""
+        self.assertEqual(Pokemon.calculate_hp(base_hp, hp_ivs, level), expected)
 
 
 class TestInit(TestCase):
@@ -82,7 +87,7 @@ class TestInit(TestCase):
     def test_get_hp_ivs(self, mock_ivs):
         """Test that we only call get_hpi_ivs when no hp_ivs are passed in."""
         # Create a new pokemon while passing IVs
-        test_pokemon1 = Pokemon( hp_ivs=10)
+        test_pokemon1 = Pokemon(hp_ivs=10)
         self.assertFalse(mock_ivs.called)
         self.assertEqual(test_pokemon1._hp_ivs, 10)
 
@@ -195,42 +200,18 @@ class TestCatch(TestCase):
 
 
 class TestAnimate(TestCase):
-    def test_impossible(self):
-        pokemon = Pokemon(catch_rate=999)
-        wobbles, msg = pokemon.animate(Ball.ultra)
-        self.assertEqual(wobbles, 3)
-        self.assertEqual(msg, "")
-
+    @parameterized.expand([
+        ('impossible', [256, 999], 3, ""),  # Should never actually happen
+        ("no_wobbles", [-10, 0, 9], 0, "The ball missed the POKEéMON!"),
+        ("one_wobble", [10, 20, 29], 1, "Darn! The POKEéMON broke free!"),
+        ("two_wobble", [30, 55, 69], 2, "Aww! It appeared to be caught!"),
+        ("three_wobble", [70, 150, 255], 3, "Shoot! It was close too!"),
+    ])
     @mock.patch('scyther.ball.Ball')
-    def test_impossible_edge(self, mock_ball):
-        """Test where where the animation check is exactly 255."""
-        pokemon = Pokemon(catch_rate=255)
-        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
-        wobbles, msg = pokemon.animate(Ball.ultra)
-        self.assertEqual(wobbles, 3)
-        self.assertEqual(msg, "Shoot! It was close too!")
-
-    # TODO: Parameterize these tests
-    @mock.patch('scyther.ball.Ball')
-    def test_less_than_10(self, mock_ball):
-        pokemon = Pokemon(catch_rate=9)
-        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
-        wobbles, msg = pokemon.animate(Ball.ultra)
-        self.assertEqual(wobbles, 0)
-        self.assertEqual(msg, "The ball missed the POKEéMON!")
-
-    @mock.patch('scyther.ball.Ball')
-    def test_less_than_30(self, mock_ball):
-        pokemon = Pokemon(catch_rate=22)
-        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
-        wobbles, msg = pokemon.animate(Ball.ultra)
-        self.assertEqual(wobbles, 1)
-        self.assertEqual(msg, "Darn! The POKEéMON broke free!")
-
-    @mock.patch('scyther.ball.Ball')
-    def test_less_than_70(self, mock_ball):
-        pokemon = Pokemon(catch_rate=55)
-        mock_ball.catch_modifier = mock.PropertyMock(return_value=100)
-        wobbles, msg = pokemon.animate(Ball.ultra)
-        self.assertEqual(wobbles, 2)
-        self.assertEqual(msg, "Aww! It appeared to be caught!")
+    def test_each_wobble(self, name, catch_rates, expected_wobbles, expected_msg, mock_ball):
+        mock_ball.Ultra.catch_modifier = 100
+        for catch_rate in catch_rates:
+            pokemon = Pokemon(catch_rate=catch_rate)
+            wobbles, msg = pokemon.animate(mock_ball.Ultra)
+            self.assertEqual(wobbles, expected_wobbles)
+            self.assertEqual(msg, expected_msg)
