@@ -13,7 +13,7 @@ from scyther.status import Status
 from scyther.ball import Ball
 
 
-class Pokemon(object):
+class Pokemon:
     """Generic wild Pokemon.
 
     Args:
