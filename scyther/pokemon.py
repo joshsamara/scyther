@@ -149,7 +149,7 @@ class Pokemon(object):
         Note:
             The return value here is constant for a given pokemon.
         """
-        animation_check = (self.catch_rate * 100) // ball.catch_modifier
+        animation_check = (self.catch_rate * 100) / ball.catch_modifier
         # Impossible in the real game
         if animation_check > 255:
             return 3, ""
