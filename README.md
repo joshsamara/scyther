@@ -42,12 +42,12 @@
 (Art from http://www.fiikus.net/?pokedex)
 
 The Pokemon catching simulator! Simulates Generation 1 capturing mechanics. Made
-because I found catching Scyther in the safari zone interesting and thought it 
+because I found catching Scyther in the safari zone interesting and thought it
 would be cool to implement the mechanics myself.
 
 # Compatibility
 
-Written to work with `python==3.4+`.
+Written to work with `python==3.5+`.
 
 # Running Tests
 
