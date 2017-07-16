@@ -107,11 +107,11 @@ class TestInit(TestCase):
     def test_status(self):
         # Should default to normal
         test_pokemon1 = Pokemon()
-        self.assertEqual(test_pokemon1.status, Status.normal)
+        self.assertEqual(test_pokemon1.status, Status.NORMAL)
 
         # Should use whatever's passed in
         test_pokemon1 = Pokemon(status="burned")
-        self.assertEqual(test_pokemon1.status, Status.burned)
+        self.assertEqual(test_pokemon1.status, Status.BURNED)
 
 
 class TestCatchBallcheck(TestCase):
@@ -120,19 +120,19 @@ class TestCatchBallcheck(TestCase):
         mock_rand.return_value = 35
         test_pokemon = Pokemon(status="burned")
         # This should simply be the random result minus the status effect
-        self.assertEqual(test_pokemon._catch_ballcheck(Ball.poke), 23)
+        self.assertEqual(test_pokemon._catch_ballcheck(Ball.POKE), 23)
         # Random should be called with the pokeball's range
         mock_rand.assert_called_with(0, 255)
         # A frozen status should lower check value
-        test_pokemon.status = Status.frozen
-        self.assertEqual(test_pokemon._catch_ballcheck(Ball.poke), 10)
+        test_pokemon.status = Status.FROZEN
+        self.assertEqual(test_pokemon._catch_ballcheck(Ball.POKE), 10)
 
     @mock.patch('scyther.pokemon.randint')
     def test_negative_check(self, mock_rand):
         mock_rand.return_value = 0
         test_pokemon = Pokemon(status="burned")
         # Simply testing that negative values are possible
-        self.assertEqual(test_pokemon._catch_ballcheck(Ball.poke), -12)
+        self.assertEqual(test_pokemon._catch_ballcheck(Ball.POKE), -12)
 
 
 class TestCatchHPcheck(TestCase):
@@ -140,40 +140,40 @@ class TestCatchHPcheck(TestCase):
         test_pokemon = Pokemon()
         test_pokemon.max_hp = 100
         test_pokemon.current_hp = 100
-        self.assertEqual(test_pokemon._catch_hpcheck(Ball.poke), 85)
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.POKE), 85)
         # Great ball is a good test because it performs integer rounding
-        self.assertEqual(test_pokemon._catch_hpcheck(Ball.great), 127)
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.GREAT), 127)
 
     def test_low_hp(self):
         # Low hp values should be higher than the high hp values
         test_pokemon = Pokemon()
         test_pokemon.max_hp = 10
         test_pokemon.current_hp = 2
-        self.assertEqual(test_pokemon._catch_hpcheck(Ball.poke), 212)
-        self.assertEqual(test_pokemon._catch_hpcheck(Ball.great), 255)
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.POKE), 212)
+        self.assertEqual(test_pokemon._catch_hpcheck(Ball.GREAT), 255)
 
 
 class TestCatch(TestCase):
     def test_ghost_marowak(self):
         """Ghost marowak is uncatchable."""
         test_pokemon = Pokemon(is_ghost_marowak=True)
-        self.assertFalse(test_pokemon.catch(Ball.master))
+        self.assertFalse(test_pokemon.catch(Ball.MASTER))
 
     def test_masterball(self):
         """Masterballs always catch."""
-        self.assertTrue(Pokemon().catch(Ball.master))
+        self.assertTrue(Pokemon().catch(Ball.MASTER))
 
     @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
     def test_negative_ballcheck(self, ballcheck):
         """A negative ballcheck higher will always catch."""
         ballcheck.return_value = -10
-        self.assertTrue(Pokemon().catch(Ball.poke))
+        self.assertTrue(Pokemon().catch(Ball.POKE))
 
     @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
     def test_ballcheck_catchrate(self, ballcheck):
         """A ballcheck higher than the pokemon's catchrate will always fail."""
         ballcheck.return_value = 70
-        self.assertFalse(Pokemon(catch_rate=35).catch(Ball.poke))
+        self.assertFalse(Pokemon(catch_rate=35).catch(Ball.POKE))
 
     @mock.patch('scyther.pokemon.randint')
     @mock.patch('scyther.pokemon.Pokemon._catch_hpcheck')
@@ -183,10 +183,10 @@ class TestCatch(TestCase):
         ballcheck.return_value = 10
         hpcheck.return_value = 75
         mock_rand.return_value = 70
-        self.assertTrue(Pokemon(catch_rate=35).catch(Ball.poke))
+        self.assertTrue(Pokemon(catch_rate=35).catch(Ball.POKE))
         # Equal values should catch
         hpcheck.return_value = 70
-        self.assertTrue(Pokemon(catch_rate=35).catch(Ball.poke))
+        self.assertTrue(Pokemon(catch_rate=35).catch(Ball.POKE))
 
     @mock.patch('scyther.pokemon.randint')
     @mock.patch('scyther.pokemon.Pokemon._catch_hpcheck')
@@ -196,7 +196,7 @@ class TestCatch(TestCase):
         ballcheck.return_value = 10
         hpcheck.return_value = 75
         mock_rand.return_value = 80
-        self.assertFalse(Pokemon(catch_rate=35).catch(Ball.poke))
+        self.assertFalse(Pokemon(catch_rate=35).catch(Ball.POKE))
 
 
 class TestAnimate(TestCase):
