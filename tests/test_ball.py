@@ -8,14 +8,14 @@ from scyther.ball import Ball
 
 class TestProperties(TestCase):
     def test_catch_modifier(self):
-        self.assertEqual(Ball.poke.catch_modifier, 255)
+        self.assertEqual(Ball.POKE.catch_modifier, 255)
 
     def test_animation_modifier(self):
-        self.assertEqual(Ball.safari.hp_factor, 12)
+        self.assertEqual(Ball.SAFARI.hp_factor, 12)
 
     def test_display(self):
-        self.assertEqual(Ball.ultra.display, "Ultraball")
+        self.assertEqual(Ball.ULTRA.display, "Ultraball")
 
     def test_is_master_ball(self):
-        self.assertFalse(Ball.ultra.is_master_ball)
-        self.assertTrue(Ball.master.is_master_ball)
+        self.assertFalse(Ball.ULTRA.is_master_ball)
+        self.assertTrue(Ball.MASTER.is_master_ball)

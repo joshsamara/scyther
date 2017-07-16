@@ -10,28 +10,18 @@ class Ball(Enum):
     The value of the pokeballs are a tuple of integers in the form of:
         (<Effect on Catch/Animation>, <HP Factor>, <Display value>)
     """
-    poke = (255, 12, "Pokeball")
-    great = (200, 8, "Greatball")
-    ultra = (150, 12, "Ultraball")
-    safari = (150, 12, "Safariball")
-    master = (0, 1, "Masterball")
+    POKE = (255, 12, "Pokeball")
+    GREAT = (200, 8, "Greatball")
+    ULTRA = (150, 12, "Ultraball")
+    SAFARI = (150, 12, "Safariball")
+    MASTER = (0, 1, "Masterball")
 
-    @property
-    def catch_modifier(self):
-        """Modifier of the Ball on catch chance/animiation effect."""
-        return self.value[0]
-
-    @property
-    def hp_factor(self):
-        """Modifier of the Ball the HP factor of the catch chance."""
-        return self.value[1]
-
-    @property
-    def display(self):
-        """The ball's display value."""
-        return self.value[2]
+    def __init__(self, catch_modifier, hp_factor, display):
+        self.catch_modifier = catch_modifier
+        self.hp_factor = hp_factor
+        self.display = display
 
     @property
     def is_master_ball(self):
         """Is this ball a master ball."""
-        return self.name == 'master'
+        return self.name == 'MASTER'

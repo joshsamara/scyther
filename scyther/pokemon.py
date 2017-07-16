@@ -10,6 +10,7 @@ Note:
 from random import randint
 
 from scyther.status import Status
+from scyther.ball import Ball
 
 
 class Pokemon(object):
@@ -38,7 +39,7 @@ class Pokemon(object):
         is_ghost_marowak (boolean): Is this pokemon Ghost Marowak?
     """
     def __init__(self, base_hp=1, hp_ivs=None, level=1,
-                 catch_rate=255, status="normal", name="Pokemon",
+                 catch_rate=255, status=Status.NORMAL, name="Pokemon",
                  is_ghost_marowak=False):
         if hp_ivs is None:
             hp_ivs = self.get_hp_ivs()
@@ -47,7 +48,7 @@ class Pokemon(object):
         self.current_hp = self.max_hp
         self.level = level
         self.catch_rate = catch_rate
-        self.status = Status[status]
+        self.status = status
         self.name = name
         self.is_ghost_marowak = is_ghost_marowak
         # Set private attributes for debugging/testing
@@ -76,7 +77,7 @@ class Pokemon(object):
         """
         return (((base_hp + hp_ivs) * 2) * level) // 100 + level + 10
 
-    def catch(self, ball):
+    def catch(self, ball=Ball.SAFARI):
         """Attempt to catch a pokemon with a given ball.
 
         Args:
@@ -140,7 +141,7 @@ class Pokemon(object):
             hp_check = hp_check // hp_divisor
         return min(hp_check, 255)
 
-    def animate(self, ball):
+    def animate(self, ball=Ball.SAFARI):
         """Determine the wobble count and text when failing to catch.
 
         Returns:
