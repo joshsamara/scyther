@@ -110,7 +110,7 @@ class TestInit(TestCase):
         self.assertEqual(test_pokemon1.status, Status.NORMAL)
 
         # Should use whatever's passed in
-        test_pokemon1 = Pokemon(status="burned")
+        test_pokemon1 = Pokemon(status=Status.BURNED)
         self.assertEqual(test_pokemon1.status, Status.BURNED)
 
 
@@ -118,7 +118,7 @@ class TestCatchBallcheck(TestCase):
     @mock.patch('scyther.pokemon.randint')
     def test_pokeball(self, mock_rand):
         mock_rand.return_value = 35
-        test_pokemon = Pokemon(status="burned")
+        test_pokemon = Pokemon(status=Status.BURNED)
         # This should simply be the random result minus the status effect
         self.assertEqual(test_pokemon._catch_ballcheck(Ball.POKE), 23)
         # Random should be called with the pokeball's range
@@ -130,7 +130,7 @@ class TestCatchBallcheck(TestCase):
     @mock.patch('scyther.pokemon.randint')
     def test_negative_check(self, mock_rand):
         mock_rand.return_value = 0
-        test_pokemon = Pokemon(status="burned")
+        test_pokemon = Pokemon(status=Status.BURNED)
         # Simply testing that negative values are possible
         self.assertEqual(test_pokemon._catch_ballcheck(Ball.POKE), -12)
 

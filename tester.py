@@ -20,7 +20,7 @@ SCYTHER = Pokemon(
     hp_ivs=None,
     level=25,
     catch_rate=45,
-    status="normal",
+    status=Status.NORMAL,
     name="Scyther",
     is_ghost_marowak=False
 )
