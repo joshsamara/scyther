@@ -8,9 +8,10 @@ Note:
 """
 
 from random import randint
+from typing import Optional, Tuple
 
-from scyther.status import Status
 from scyther.ball import Ball
+from scyther.status import Status
 
 
 class Pokemon:
@@ -38,9 +39,15 @@ class Pokemon:
         name (str): Name of the pokemon.
         is_ghost_marowak (boolean): Is this pokemon Ghost Marowak?
     """
-    def __init__(self, base_hp=1, hp_ivs=None, level=1,
-                 catch_rate=255, status=Status.NORMAL, name="Pokemon",
-                 is_ghost_marowak=False):
+
+    def __init__(self,
+                 base_hp: int = 1,
+                 hp_ivs: Optional[int] = None,
+                 level: int = 1,
+                 catch_rate: int = 255,
+                 status: Status = Status.NORMAL,  # type: ignore
+                 name: str = "Pokemon",
+                 is_ghost_marowak: bool = False) -> None:
         if hp_ivs is None:
             hp_ivs = self.get_hp_ivs()
 
@@ -56,7 +63,7 @@ class Pokemon:
         self._hp_ivs = hp_ivs
 
     @staticmethod
-    def get_hp_ivs():
+    def get_hp_ivs() -> int:
         """Randomly generate a value for HP IVs.
 
         Notes:
@@ -70,14 +77,14 @@ class Pokemon:
         return hp_ivs
 
     @staticmethod
-    def calculate_hp(base_hp, hp_ivs, level):
+    def calculate_hp(base_hp: int, hp_ivs: int, level: int) -> int:
         """Calculate the current max HP.
 
         See: http://cdn.bulbagarden.net/upload/d/d4/HP_calc.png
         """
         return (((base_hp + hp_ivs) * 2) * level) // 100 + level + 10
 
-    def catch(self, ball=Ball.SAFARI):
+    def catch(self, ball: Ball = Ball.SAFARI) -> bool:
         """Attempt to catch a pokemon with a given ball.
 
         Args:
@@ -120,7 +127,7 @@ class Pokemon:
     #
     # These are defined outside of the catch function for better testability.
     ##
-    def _catch_ballcheck(self, ball):
+    def _catch_ballcheck(self, ball: Ball) -> int:
         """Calculate the ballcheck for the catch function.
 
         Note:
@@ -128,7 +135,7 @@ class Pokemon:
         """
         return randint(0, ball.catch_modifier) - self.status.catch_modifier
 
-    def _catch_hpcheck(self, ball):
+    def _catch_hpcheck(self, ball: Ball) -> int:
         """Calculate the hp check for the catch function.
 
         Note:
@@ -141,7 +148,7 @@ class Pokemon:
             hp_check = hp_check // hp_divisor
         return min(hp_check, 255)
 
-    def animate(self, ball=Ball.SAFARI):
+    def animate(self, ball: Ball = Ball.SAFARI) -> Tuple[int, str]:
         """Determine the wobble count and text when failing to catch.
 
         Returns:
