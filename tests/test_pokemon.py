@@ -2,11 +2,12 @@
 """Tests for Pokemon class."""
 
 from unittest import TestCase, mock
+
 from nose_parameterized import parameterized
 
-from scyther.status import Status
 from scyther.ball import Ball
 from scyther.pokemon import Pokemon
+from scyther.status import Status
 
 
 class TestGetHpIVs(TestCase):
@@ -155,17 +156,17 @@ class TestCatchHPcheck(TestCase):
 
 class TestCatch(TestCase):
     def test_ghost_marowak(self):
-        """Ghost marowak is uncatchable."""
+        """Test ghost marowak is uncatchable."""
         test_pokemon = Pokemon(is_ghost_marowak=True)
         self.assertFalse(test_pokemon.catch(Ball.MASTER))
 
     def test_masterball(self):
-        """Masterballs always catch."""
+        """Test masterballs always catch."""
         self.assertTrue(Pokemon().catch(Ball.MASTER))
 
     @mock.patch('scyther.pokemon.Pokemon._catch_ballcheck')
     def test_negative_ballcheck(self, ballcheck):
-        """A negative ballcheck higher will always catch."""
+        """Test a negative ballcheck higher will always catch."""
         ballcheck.return_value = -10
         self.assertTrue(Pokemon().catch(Ball.POKE))
 

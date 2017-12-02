@@ -1,3 +1,5 @@
 # Coverage
 .coverage
 coverage.xml
+# MyPy
+.mypy_cache
