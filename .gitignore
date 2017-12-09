@@ -3,3 +3,6 @@
 coverage.xml
 # MyPy
 .mypy_cache
+# Other
+.cache
+.tags
